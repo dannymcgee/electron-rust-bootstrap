@@ -1,0 +1,22 @@
+{
+	"folders": [{
+		"name": "Workspace Root",
+		"path": "."
+	}, {
+		"name": "hello-wasm",
+		"path": "libs/hello-wasm"
+	}, {
+		"name": "main",
+		"path": "apps/main"
+	}, {
+		"name": "renderer",
+		"path": "apps/renderer"
+	}],
+	"settings": {
+		"jest.disabledWorkspaceFolders": [
+			"main",
+			"renderer",
+			"hello-wasm"
+		]
+	}
+}

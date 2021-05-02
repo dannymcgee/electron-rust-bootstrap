@@ -1,10 +1,15 @@
 import { Component } from "@angular/core";
+const hello = import("@daw/hello-wasm")
 
 @Component({
 	selector: "daw-root",
-	templateUrl: "./app.component.html",
-	styleUrls: ["./app.component.scss"],
+	template: `
+		<button (click)="helloWasm()">Say Hello</button>
+	`,
+	styles: [``],
 })
 export class AppComponent {
-	title = "renderer";
+	async helloWasm() {
+		(await hello).greet();
+	}
 }
