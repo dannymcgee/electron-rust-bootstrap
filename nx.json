@@ -1,14 +1,9 @@
 {
 	"implicitDependencies": {
-		"package.json": {
-			"dependencies": "*",
-			"devDependencies": "*"
-		},
+		"package.json": { "dependencies": "*", "devDependencies": "*" },
 		".eslintrc.json": "*"
 	},
-	"affected": {
-		"defaultBase": "master"
-	},
+	"affected": { "defaultBase": "master" },
 	"npmScope": "daw",
 	"tasksRunnerOptions": {
 		"default": {
@@ -22,12 +17,8 @@
 		}
 	},
 	"projects": {
-		"renderer": {
-			"tags": []
-		},
-		"renderer-e2e": {
-			"tags": [],
-			"implicitDependencies": ["renderer"]
-		}
+		"renderer": { "tags": [] },
+		"renderer-e2e": { "tags": [], "implicitDependencies": ["renderer"] },
+		"main": { "tags": [], "implicitDependencies": ["renderer"] }
 	}
 }

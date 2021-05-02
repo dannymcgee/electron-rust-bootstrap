@@ -1,6 +1,7 @@
 {
 	"version": 1,
 	"cli": {
+		"analytics": "677a3182-c0ff-4376-99d4-11abc6700bba",
 		"defaultCollection": "@nrwl/angular"
 	},
 	"defaultProject": "renderer",
@@ -142,6 +143,73 @@
 					"builder": "@nrwl/linter:eslint",
 					"options": {
 						"lintFilePatterns": ["apps/renderer-e2e/**/*.{js,ts}"]
+					}
+				}
+			}
+		},
+		"main": {
+			"root": "apps/main",
+			"sourceRoot": "apps/main/src",
+			"projectType": "application",
+			"prefix": "main",
+			"architect": {
+				"build": {
+					"builder": "nx-electron:build",
+					"options": {
+						"outputPath": "dist/apps/main",
+						"main": "apps/main/src/main.ts",
+						"tsConfig": "apps/main/tsconfig.app.json",
+						"assets": ["apps/main/src/assets"]
+					},
+					"configurations": {
+						"production": {
+							"optimization": true,
+							"extractLicenses": true,
+							"inspect": false,
+							"fileReplacements": [
+								{
+									"replace": "apps/main/src/environments/environment.ts",
+									"with": "apps/main/src/environments/environment.prod.ts"
+								}
+							]
+						}
+					}
+				},
+				"serve": {
+					"builder": "nx-electron:execute",
+					"options": {
+						"buildTarget": "main:build"
+					}
+				},
+				"package": {
+					"builder": "nx-electron:package",
+					"options": {
+						"name": "main",
+						"frontendProject": "renderer",
+						"outputPath": "dist/packages",
+						"prepackageOnly": true
+					}
+				},
+				"make": {
+					"builder": "nx-electron:make",
+					"options": {
+						"name": "main",
+						"frontendProject": "renderer",
+						"outputPath": "dist/executables"
+					}
+				},
+				"lint": {
+					"builder": "@nrwl/linter:eslint",
+					"options": {
+						"lintFilePatterns": ["apps/main/**/*.ts"]
+					}
+				},
+				"test": {
+					"builder": "@nrwl/jest:jest",
+					"outputs": ["coverage/apps/main"],
+					"options": {
+						"jestConfig": "apps/main/jest.config.js",
+						"passWithNoTests": true
 					}
 				}
 			}
