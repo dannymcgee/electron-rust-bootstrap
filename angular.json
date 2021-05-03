@@ -223,11 +223,15 @@
 			"projectType": "library",
 			"architect": {
 				"build": {
-					"builder": "@nrwl/workspace:run-commands",
+					"builder": "./tools/builders/wasm-pack:build",
 					"options": {
-						"command": "wasm-pack build --target bundler",
-						"cwd": "libs/hello-wasm",
-						"color": true
+						"outName": "index",
+						"profile": "dev"
+					},
+					"configurations": {
+						"production": {
+							"profile": "release"
+						}
 					}
 				}
 			}

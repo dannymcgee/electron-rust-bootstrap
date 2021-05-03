@@ -25,7 +25,9 @@
 		"update": "nx migrate latest",
 		"workspace-generator": "nx workspace-generator",
 		"dep-graph": "nx dep-graph",
-		"help": "nx help"
+		"help": "nx help",
+		"generate-schemas": "ts-node --project tools/tsconfig.tools.json tools/generate-schemas.ts",
+		"compile-builders": "tsc tools/builders/wasm-pack/build/impl"
 	},
 	"private": true,
 	"dependencies": {
@@ -76,6 +78,7 @@
 		"prettier": "2.2.1",
 		"ts-jest": "26.4.0",
 		"ts-node": "~9.1.1",
-		"typescript": "~4.1.4"
+		"typescript": "~4.1.4",
+		"typescript-json-schema": "^0.50.0"
 	}
 }

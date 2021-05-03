@@ -17,6 +17,7 @@
 			"main",
 			"renderer",
 			"hello-wasm"
-		]
+		],
+		"typescript.tsdk": "Workspace Root\\node_modules\\typescript\\lib"
 	}
 }
