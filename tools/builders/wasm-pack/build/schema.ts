@@ -69,4 +69,6 @@ export interface Options {
 	 * on using the compiled output.
 	 */
 	target?: Target;
+	/** Watch source directory and rebuild on changes. */
+	watch?: boolean;
 }
