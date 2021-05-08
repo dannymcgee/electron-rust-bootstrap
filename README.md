@@ -1,4 +1,4 @@
-# Daw
+# Electron / Angular / Rust Bootstrap
 
 This project was generated using [Nx](https://nx.dev).
 
