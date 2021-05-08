@@ -73,7 +73,10 @@ function runBuilder(opts: CLIOptions, ctx: BuilderContext) {
 
 function buildLib(options: Options) {
 	return new Promise<void>((resolve, reject) => {
-		cp.spawn("wasm-pack", args(options), { stdio: "inherit" })
+		cp.spawn("cargo", args(options), {
+			stdio: "inherit",
+			cwd: options.path,
+		})
 			.on("close", resolve)
 			.on("exit", resolve)
 			.on("error", reject);
@@ -121,15 +124,8 @@ async function normalizeOptions(
 	return options;
 }
 
-function args(options: Options): string[] {
-	let result = ["build", options.path];
-
-	if (options.profile) result.push(`--${options.profile}`);
-	if (options.outDir) result.push("--out-dir", options.outDir);
-	if (options.outName) result.push("--out-name", options.outName);
-	if (options.target) result.push("--target", options.target);
-
-	return result;
+function args(_: Options): string[] {
+	return ["build"];
 }
 
 function loadEnvVars() {

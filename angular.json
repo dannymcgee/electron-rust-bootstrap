@@ -40,11 +40,8 @@
 			"prefix": "daw",
 			"architect": {
 				"build": {
-					"builder": "@angular-builders/custom-webpack:browser",
+					"builder": "@angular-devkit/build-angular:browser",
 					"options": {
-						"customWebpackConfig": {
-							"path": "./extra-webpack.config.js"
-						},
 						"outputPath": "dist/apps/renderer",
 						"index": "apps/renderer/src/index.html",
 						"main": "apps/renderer/src/main.ts",
@@ -89,7 +86,7 @@
 					}
 				},
 				"serve": {
-					"builder": "@angular-builders/custom-webpack:dev-server",
+					"builder": "@angular-devkit/build-angular:dev-server",
 					"options": {
 						"browserTarget": "renderer:build"
 					},
@@ -217,21 +214,16 @@
 				}
 			}
 		},
-		"hello-wasm": {
-			"root": "libs/hello-wasm",
-			"sourceRoot": "libs/hello-wasm/src",
-			"projectType": "library",
+		"back-end": {
+			"projectType": "application",
+			"root": "apps/back-end",
+			"sourceRoot": "apps/back-end/src",
 			"architect": {
 				"build": {
-					"builder": "./tools/builders/wasm-pack:build",
-					"options": {
-						"outName": "index",
-						"profile": "dev"
-					},
+					"builder": "./tools/builders/cargo:build",
+					"options": {},
 					"configurations": {
-						"production": {
-							"profile": "release"
-						}
+						"production": {}
 					}
 				}
 			}

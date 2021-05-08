@@ -3,7 +3,7 @@
 		"build": {
 			"implementation": "./build/impl",
 			"schema": "./build/schema.json",
-			"description": "Builds a Rust WebAssembly library"
+			"description": "Builds a Rust package"
 		}
 	}
 }

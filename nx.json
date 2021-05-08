@@ -38,7 +38,7 @@
 			"tags": [],
 			"implicitDependencies": ["renderer"]
 		},
-		"hello-wasm": {
+		"back-end": {
 			"tags": []
 		}
 	}

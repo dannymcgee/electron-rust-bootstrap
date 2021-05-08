@@ -14,9 +14,7 @@
 		"skipLibCheck": true,
 		"skipDefaultLibCheck": true,
 		"baseUrl": ".",
-		"paths": {
-			"@daw/hello-wasm": ["libs/hello-wasm/pkg/"]
-		}
+		"paths": {}
 	},
 	"exclude": ["node_modules", "tmp"]
 }

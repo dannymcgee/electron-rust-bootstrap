@@ -27,7 +27,7 @@
 		"dep-graph": "nx dep-graph",
 		"help": "nx help",
 		"generate-schemas": "ts-node --project tools/tsconfig.tools.json tools/generate-schemas.ts",
-		"compile-builders": "tsc tools/builders/wasm-pack/build/impl"
+		"compile-builders": "tsc tools/builders/cargo/build/impl"
 	},
 	"private": true,
 	"dependencies": {
