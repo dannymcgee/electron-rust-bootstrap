@@ -2,72 +2,73 @@
  * This module is responsible on handling all the setup events that is submitted by squirrel.
  */
 
-import { app } from "electron";
-import { spawn } from "child_process";
-import { resolve, join, basename } from "path";
+import { app as electron } from "electron";
+import cp from "child_process";
+import path from "path";
 import { environment } from "../../environments/environment";
 
-export default class SquirrelEvents {
-	private static isAppFirstRun = false;
+// export default class SquirrelEvents {
+namespace squirrelEvents {
+	let isAppFirstRun = false;
 
 	// app paths
-	private static appFolder = resolve(process.execPath, "..");
-	private static appRootFolder = resolve(SquirrelEvents.appFolder, "..");
-	private static updateExe = resolve(
-		join(SquirrelEvents.appRootFolder, "Update.exe")
+	let appFolder = path.resolve(process.execPath, "..");
+	let appRootFolder = path.resolve(appFolder, "..");
+	let updateExe = path.resolve(
+		path.join(appRootFolder, "Update.exe")
 	);
-	private static exeName = resolve(
-		join(
-			SquirrelEvents.appRootFolder,
+	let exeName = path.resolve(
+		path.join(
+			appRootFolder,
 			"app-" + environment.version,
-			basename(process.execPath)
+			path.basename(process.execPath)
 		)
 	);
 
-	static handleEvents(): boolean {
-		if (process.argv.length === 1 || process.platform !== "win32") {
+	export function handleEvents(): boolean {
+		if (process.argv.length === 1 || process.platform !== "win32")
 			return false;
-		}
 
 		switch (process.argv[1]) {
 			case "--squirrel-install":
 			case "--squirrel-updated":
 				// Install desktop and start menu shortcuts
-				SquirrelEvents.update(["--createShortcut", SquirrelEvents.exeName]);
+				update(["--createShortcut", exeName]);
 
 				return true;
 
 			case "--squirrel-uninstall":
 				// Remove desktop and start menu shortcuts
-				SquirrelEvents.update(["--removeShortcut", SquirrelEvents.exeName]);
+				update(["--removeShortcut", exeName]);
 
 				return true;
 
 			case "--squirrel-obsolete":
-				app.quit();
+				electron.quit();
 				return true;
 
 			case "--squirrel-firstrun":
 				// Check if it the first run of the software
-				SquirrelEvents.isAppFirstRun = true;
+				isAppFirstRun = true;
 				return false;
 		}
 
 		return false;
 	}
 
-	static isFirstRun(): boolean {
-		return SquirrelEvents.isAppFirstRun;
+	export function isFirstRun(): boolean {
+		return isAppFirstRun;
 	}
 
-	private static update(args: Array<string>) {
+	function update(args: Array<string>) {
 		try {
-			spawn(SquirrelEvents.updateExe, args, { detached: true }).on(
-				"close",
-				() => setTimeout(app.quit, 1000)
-			);
-		} catch (error) {
-			setTimeout(app.quit, 1000);
+			cp.spawn(updateExe, args, { detached: true })
+				.on("close", () => setTimeout(electron.quit, 1000));
+		}
+		catch (_) {
+			setTimeout(electron.quit, 1000);
 		}
 	}
 }
+
+export default squirrelEvents;

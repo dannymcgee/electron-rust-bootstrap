@@ -6,20 +6,22 @@
 import { app, ipcMain } from "electron";
 import { environment } from "../../environments/environment";
 
-export default class ElectronEvents {
-	static bootstrapElectronEvents(): Electron.IpcMain {
+namespace electronEvents {
+	export function bootstrapElectronEvents(): Electron.IpcMain {
+		// Retrieve app version
+		ipcMain.handle("get-app-version", _ => {
+			console.log(`Fetching application version... [v${environment.version}]`);
+
+			return environment.version;
+		});
+
+		// Handle App termination
+		ipcMain.on("quit", (_, code) => {
+			app.exit(code);
+		});
+
 		return ipcMain;
 	}
 }
 
-// Retrieve app version
-ipcMain.handle("get-app-version", _ => {
-	console.log(`Fetching application version... [v${environment.version}]`);
-
-	return environment.version;
-});
-
-// Handle App termination
-ipcMain.on("quit", (_, code) => {
-	app.exit(code);
-});
+export default electronEvents;

@@ -1,33 +1,35 @@
-import SquirrelEvents from "./app/events/squirrel.events";
-import ElectronEvents from "./app/events/electron.events";
-import { app, BrowserWindow } from "electron";
-import App from "./app/app";
+import { app as electron } from "electron";
 
-export default class Main {
-	static initialize() {
-		if (SquirrelEvents.handleEvents()) {
+import squirrel from "./app/events/squirrel.events";
+import electronEvents from "./app/events/electron.events";
+import updateEvents from "./app/events/update.events";
+import app from "./app/app";
+
+namespace main {
+	export function initialize() {
+		if (squirrel.handleEvents()) {
 			// squirrel event handled (except first run event) and app will exit in 1000ms, so don't do anything else
-			app.quit();
+			electron.quit();
 		}
 	}
 
-	static bootstrapApp() {
-		App.main(app, BrowserWindow);
+	export function bootstrapApp() {
+		app.main();
 	}
 
-	static bootstrapAppEvents() {
-		ElectronEvents.bootstrapElectronEvents();
+	export function bootstrapAppEvents() {
+		electronEvents.bootstrapElectronEvents();
 
 		// initialize auto updater service
-		if (!App.isDevelopmentMode()) {
-			// UpdateEvents.initAutoUpdateService();
+		if (!app.isDevelopmentMode()) {
+			updateEvents.initAutoUpdateService();
 		}
 	}
 }
 
 // handle setup events as quickly as possible
-Main.initialize();
+main.initialize();
 
 // bootstrap app
-Main.bootstrapApp();
-Main.bootstrapAppEvents();
+main.bootstrapApp();
+main.bootstrapAppEvents();

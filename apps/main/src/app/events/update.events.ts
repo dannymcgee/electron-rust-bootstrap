@@ -1,29 +1,30 @@
-import { app, autoUpdater, dialog } from "electron";
+import { app as electron, autoUpdater, dialog } from "electron";
 import { platform, arch } from "os";
-import { updateServerUrl } from "../constants";
-import App from "../app";
+import { UPDATE_SERVER_URL } from "../constants";
+import app from "../app";
 
-export default class UpdateEvents {
+// export default class UpdateEvents {
+namespace updateEvents {
 	// initialize auto update service - most be invoked only in production
-	static initAutoUpdateService() {
+	export function initAutoUpdateService() {
 		const platform_arch =
 			platform() === "win32" ? platform() : platform() + "_" + arch();
-		const version = app.getVersion();
+		const version = electron.getVersion();
 		const feed: Electron.FeedURLOptions = {
-			url: `${updateServerUrl}/update/${platform_arch}/${version}`,
+			url: `${UPDATE_SERVER_URL}/update/${platform_arch}/${version}`,
 		};
 
-		if (!App.isDevelopmentMode()) {
+		if (!app.isDevelopmentMode()) {
 			console.log("Initializing auto update service...\n");
 
 			autoUpdater.setFeedURL(feed);
-			UpdateEvents.checkForUpdates();
+			checkForUpdates();
 		}
 	}
 
 	// check for updates - most be invoked after initAutoUpdateService() and only in production
-	static checkForUpdates() {
-		if (!App.isDevelopmentMode() && autoUpdater.getFeedURL() !== "") {
+	export function checkForUpdates() {
+		if (!app.isDevelopmentMode() && autoUpdater.getFeedURL() !== "") {
 			autoUpdater.checkForUpdates();
 		}
 	}
@@ -67,3 +68,5 @@ autoUpdater.on("error", (message) => {
 	console.error("There was a problem updating the application");
 	console.error(message, "\n");
 });
+
+export default updateEvents;
