@@ -62,3 +62,11 @@ import "zone.js/dist/zone"; // Included with Angular CLI.
 /***************************************************************************************************
  * APPLICATION IMPORTS
  */
+
+declare global {
+	var electron: {
+		getAppVersion(): Promise<string>,
+		send(message: string): Promise<string>,
+		platform: string;
+	}
+}

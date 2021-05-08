@@ -1,4 +1,5 @@
 import { Component } from "@angular/core";
+import { ElectronService } from "./electron.service";
 
 @Component({
 	selector: "daw-root",
@@ -8,6 +9,12 @@ import { Component } from "@angular/core";
 	styles: [``],
 })
 export class AppComponent {
-	hello() {
+	constructor(
+		private _electron: ElectronService,
+	) {}
+
+	async hello() {
+		let response = await this._electron.send("Hello, back-end!");
+		alert(response);
 	}
 }

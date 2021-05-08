@@ -1,15 +1,17 @@
 import { BrowserWindow, shell, screen } from "electron";
-import { rendererAppName, rendererAppPort } from "./constants";
+import path from "path";
+import url from "url";
+
 import { environment } from "../environments/environment";
-import { join } from "path";
-import { format } from "url";
+import { rendererAppName, rendererAppPort } from "./constants";
+import ipc from "./ipc";
 
 export default class App {
 	// Keep a global reference of the window object, if you don't, the window will
 	// be closed automatically when the JavaScript object is garbage collected.
 	static mainWindow: Electron.BrowserWindow;
 	static application: Electron.App;
-	static BrowserWindow;
+	static BrowserWindow: typeof Electron.BrowserWindow;
 
 	public static isDevelopmentMode() {
 		const isEnvironmentSet: boolean = "ELECTRON_IS_DEV" in process.env;
@@ -69,7 +71,7 @@ export default class App {
 			webPreferences: {
 				contextIsolation: true,
 				backgroundThrottling: false,
-				preload: join(__dirname, "preload.js"),
+				preload: path.join(__dirname, "preload.js"),
 			},
 		});
 		App.mainWindow.setMenu(null);
@@ -102,14 +104,14 @@ export default class App {
 			console.log(`Loading URL: http://localhost:${rendererAppPort}`);
 			App.mainWindow.loadURL(`http://localhost:${rendererAppPort}`);
 		} else {
-			console.log(`Loading URL: ${format({
-				pathname: join(__dirname, "..", rendererAppName, "index.html"),
+			console.log(`Loading URL: ${url.format({
+				pathname: path.join(__dirname, "..", rendererAppName, "index.html"),
 				protocol: "file:",
 				slashes: true,
 			})}`);
 			App.mainWindow.loadURL(
-				format({
-					pathname: join(__dirname, "..", rendererAppName, "index.html"),
+				url.format({
+					pathname: path.join(__dirname, "..", rendererAppName, "index.html"),
 					protocol: "file:",
 					slashes: true,
 				})
@@ -125,6 +127,7 @@ export default class App {
 
 		App.BrowserWindow = browserWindow;
 		App.application = app;
+		ipc.init();
 
 		App.application.on("window-all-closed", App.onWindowAllClosed); // Quit when all windows are closed.
 		App.application.on("ready", App.onReady); // App is ready to load data
