@@ -4,7 +4,7 @@
 		"analytics": "677a3182-c0ff-4376-99d4-11abc6700bba",
 		"defaultCollection": "@nrwl/angular"
 	},
-	"defaultProject": "renderer",
+	"defaultProject": "main",
 	"schematics": {
 		"@nrwl/angular": {
 			"application": {
@@ -178,7 +178,10 @@
 				"serve": {
 					"builder": "nx-electron:execute",
 					"options": {
-						"buildTarget": "main:build"
+						"buildTarget": "main:build",
+						"waitUntilTargets": [
+							"renderer:serve"
+						]
 					}
 				},
 				"package": {
