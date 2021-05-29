@@ -37,7 +37,7 @@
 			"projectType": "application",
 			"root": "apps/renderer",
 			"sourceRoot": "apps/renderer/src",
-			"prefix": "daw",
+			"prefix": "app",
 			"architect": {
 				"build": {
 					"builder": "@angular-devkit/build-angular:browser",
