@@ -14,7 +14,6 @@ export class AppComponent {
 	) {}
 
 	async hello() {
-		let response = await this._electron.send("Hello, back-end!");
-		alert(response);
+		await this._electron.send("Hello, back-end!");
 	}
 }
