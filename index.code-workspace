@@ -1,23 +1,27 @@
 {
 	"folders": [{
 		"name": "Workspace Root",
-		"path": "."
+		"path": ".",
 	}, {
 		"name": "main",
-		"path": "apps/main"
+		"path": "apps/main",
 	}, {
 		"name": "renderer",
-		"path": "apps/renderer"
+		"path": "apps/renderer",
 	}, {
 		"name": "back-end",
-		"path": "apps/back-end"
+		"path": "apps/back-end",
+	}, {
+		"name": "api",
+		"path": "libs/api",
 	}],
 	"settings": {
 		"jest.disabledWorkspaceFolders": [
 			"main",
 			"renderer",
-			"back-end"
+			"back-end",
+			"api",
 		],
-		"typescript.tsdk": "Workspace Root/node_modules/typescript/lib"
-	}
+		"typescript.tsdk": "Workspace Root/node_modules/typescript/lib",
+	},
 }

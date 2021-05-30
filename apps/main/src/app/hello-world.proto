@@ -1,5 +1,0 @@
-syntax = "proto3";
-
-message HelloWorld {
-	required string value = 1;
-}

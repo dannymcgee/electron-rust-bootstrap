@@ -2,20 +2,14 @@ import cp from "child_process";
 import path from "path";
 
 import { ipcMain } from "electron";
-import { load, Reader } from "protobufjs";
+import { Reader } from "protobufjs";
+
+import { api } from "@app/api";
 
 const BACKEND_EXE_PATH = "apps/back-end/target/debug/back-end.exe";
-const PROTO_PATH = "apps/main/src/app/hello-world.proto";
-
-const HelloWorldAsync = (async () => {
-	let proto = path.resolve(process.cwd(), PROTO_PATH);
-	let root = await load(proto);
-
-	return root.lookupType("HelloWorld");
-})();
-
 
 namespace ipc {
+
 	let proc: cp.ChildProcess;
 
 	export function init() {
@@ -36,13 +30,19 @@ namespace ipc {
 
 	async function send(message: string) {
 		let start = Date.now();
-		let HelloWorld = await HelloWorldAsync;
-		let msg = HelloWorld.create({ value: message });
-		let reqBuf = HelloWorld.encode(msg).finish();
+
+		let req = new api.Request({
+			type: api.MessageType.Foo,
+			payload: "foo",
+			foo: new api.Request.FooPayload({
+				foo: message,
+			}),
+		});
+		let reqBuf = api.Request.encode(req).finish();
 
 		proc.stdout.once("data", (buf) => {
 			let reader = Reader.create(buf);
-			let res = HelloWorld.decodeDelimited(reader);
+			let res = api.Response.decode(reader);
 			let end = Date.now();
 
 			console.log("from back-end:", res);
@@ -68,6 +68,7 @@ namespace ipc {
 	function onError(err: Error) {
 		console.log("onError:", { err });
 	}
+
 }
 
 export default ipc;

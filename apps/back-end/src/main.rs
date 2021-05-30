@@ -1,37 +1,55 @@
-use std::{borrow::Cow::Borrowed, io::{self, BufRead, Write}};
-use quick_protobuf::{BytesReader, MessageRead, Writer};
+use std::io::{self, BufRead, Write};
+use prost::Message;
 
-mod hello_world;
-use hello_world::HelloWorld;
+pub mod api {
+	include!(concat!(env!("OUT_DIR"), "/api.rs"));
+}
+use api::{Request, Response, MessageType, request, response};
 
 fn main() {
 	let stdin = io::stdin();
 	let mut stdout = io::stdout();
-
-	let mut bytes: Vec<u8> = vec![];
+	let mut bytes = vec![];
 
 	loop {
 		stdin.lock()
 			.read_until(b'\r', &mut bytes)
 			.unwrap();
-
 		bytes.pop();
 
-		let mut reader = BytesReader::from_bytes(&bytes);
-		let _request = HelloWorld::from_reader(&mut reader, &bytes).unwrap();
+		let req = Request::decode(&bytes[..]).unwrap();
+
+		bytes.clear();
 
 		// Do something with request
+		let received = extract_message(req);
 
-		let response = HelloWorld {
-			value: Borrowed("Hello from back-end!"),
+		// Send response
+		let response = Response {
+			r#type: MessageType::Foo.into(),
+			payload: Some(response::Payload::Foo(response::FooPayload {
+				foo: format!("Received message: {}", received),
+			})),
 		};
+		response.encode(&mut bytes).unwrap();
 
-		Writer::new(stdout.lock())
-			.write_message(&response)
+		stdout.lock()
+			.write_all(&bytes)
 			.unwrap();
-
 		stdout.flush().unwrap();
 
 		bytes.clear();
+	}
+}
+
+#[allow(clippy::blacklisted_name)]
+fn extract_message(req: Request) -> String {
+	use request::*;
+
+	match req.payload {
+		Some(Payload::Foo(FooPayload { foo })) => foo,
+		Some(Payload::Bar(BarPayload { bar })) => bar,
+		Some(Payload::Baz(BazPayload { baz })) => baz,
+		None => unreachable!(),
 	}
 }
