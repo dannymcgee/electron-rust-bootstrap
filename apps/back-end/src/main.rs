@@ -1,10 +1,7 @@
 use std::io::{self, BufRead, Write};
-use prost::Message;
 
-pub mod api {
-	include!(concat!(env!("OUT_DIR"), "/api.rs"));
-}
 use api::{Request, Response, MessageType, request, response};
+use prost::Message;
 
 fn main() {
 	let stdin = io::stdin();

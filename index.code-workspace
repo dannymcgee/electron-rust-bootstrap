@@ -14,6 +14,9 @@
 	}, {
 		"name": "api",
 		"path": "libs/api",
+	}, {
+		"name": "api/rust",
+		"path": "libs/api/src/lib/rust",
 	}],
 	"settings": {
 		"jest.disabledWorkspaceFolders": [

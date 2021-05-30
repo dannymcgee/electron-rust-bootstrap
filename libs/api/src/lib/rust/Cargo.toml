@@ -1,0 +1,11 @@
+[package]
+name = "api"
+version = "0.1.0"
+edition = "2018"
+build = "build.rs"
+
+[dependencies]
+prost = "0.7"
+
+[build-dependencies]
+prost-build = { version = "0.7" }
