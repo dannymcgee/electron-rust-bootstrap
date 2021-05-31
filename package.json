@@ -27,7 +27,9 @@
 		"dep-graph": "nx dep-graph",
 		"help": "nx help",
 		"generate-schemas": "ts-node --project tools/tsconfig.tools.json tools/generate-schemas.ts",
-		"compile-builders": "tsc tools/builders/cargo/build/impl"
+		"compile-builders:cargo": "tsc tools/builders/cargo/build/impl",
+		"compile-builders:protobuf": "tsc tools/builders/protobuf/build/impl",
+		"compile-builders": "yarn compile-builders:cargo && yarn compile-builders:protobuf"
 	},
 	"private": true,
 	"dependencies": {

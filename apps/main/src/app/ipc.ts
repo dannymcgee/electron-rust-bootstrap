@@ -32,7 +32,7 @@ namespace ipc {
 		let start = Date.now();
 
 		let req = new api.Request({
-			type: api.MessageType.Foo,
+			type: api.MessageType.FOO,
 			payload: "foo",
 			foo: new api.Request.FooPayload({
 				foo: message,

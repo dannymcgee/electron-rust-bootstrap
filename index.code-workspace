@@ -17,6 +17,9 @@
 	}, {
 		"name": "api/rust",
 		"path": "libs/api/src/lib/rust",
+	}, {
+		"name": "tools",
+		"path": "tools",
 	}],
 	"settings": {
 		"jest.disabledWorkspaceFolders": [
@@ -24,6 +27,7 @@
 			"renderer",
 			"back-end",
 			"api",
+			"tools",
 		],
 		"typescript.tsdk": "Workspace Root/node_modules/typescript/lib",
 	},

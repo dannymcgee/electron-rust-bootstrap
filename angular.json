@@ -236,6 +236,12 @@
 			"sourceRoot": "libs/api/src",
 			"projectType": "library",
 			"architect": {
+				"build": {
+					"builder": "./tools/builders/protobuf:build",
+					"options": {
+						"protosPath": "libs/api/src/lib/proto"
+					}
+				},
 				"lint": {
 					"builder": "@nrwl/linter:eslint",
 					"options": {

@@ -1,0 +1,9 @@
+{
+	"builders": {
+		"build": {
+			"implementation": "./build/impl",
+			"schema": "./build/schema.json",
+			"description": "Generates TypeScript classes from .proto files"
+		}
+	}
+}
