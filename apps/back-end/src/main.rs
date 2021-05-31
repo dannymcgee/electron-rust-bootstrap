@@ -1,41 +1,20 @@
-use std::io::{self, BufRead, Write};
-
 use api::{Request, Response, MessageType, request, response};
-use prost::Message;
+
+mod ipc;
 
 fn main() {
-	let stdin = io::stdin();
-	let mut stdout = io::stdout();
-	let mut bytes = vec![];
+	let (tx, rx) = ipc::pipe();
 
 	loop {
-		stdin.lock()
-			.read_until(b'\r', &mut bytes)
-			.unwrap();
-		bytes.pop();
-
-		let req = Request::decode(&bytes[..]).unwrap();
-
-		bytes.clear();
-
-		// Do something with request
+		let req: Request = rx.recv();
 		let received = extract_message(req);
 
-		// Send response
-		let response = Response {
+		tx.send(&Response {
 			r#type: MessageType::Foo.into(),
 			payload: Some(response::Payload::Foo(response::FooPayload {
 				foo: format!("Received message: {}", received),
 			})),
-		};
-		response.encode(&mut bytes).unwrap();
-
-		stdout.lock()
-			.write_all(&bytes)
-			.unwrap();
-		stdout.flush().unwrap();
-
-		bytes.clear();
+		});
 	}
 }
 
