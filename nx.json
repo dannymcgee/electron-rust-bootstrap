@@ -12,17 +12,14 @@
 	"npmScope": "app",
 	"tasksRunnerOptions": {
 		"default": {
-			"runner": "@nrwl/nx-cloud",
+			"runner": "@nrwl/workspace/tasks-runners/default",
 			"options": {
 				"cacheableOperations": [
 					"build",
 					"lint",
 					"test",
 					"e2e"
-				],
-				"accessToken": "MzRlMTM0ZGMtNzI5Yy00YWUzLWE3NmUtMDJkNzczMjQ5ZjU2fHJlYWQtd3JpdGU=",
-				"canTrackAnalytics": false,
-				"showUsageWarnings": true
+				]
 			}
 		}
 	},
