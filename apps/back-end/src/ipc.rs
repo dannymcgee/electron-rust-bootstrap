@@ -11,7 +11,7 @@ impl IpcSender {
 		let mut bytes = vec![];
 		let mut stdout = io::stdout();
 
-		msg.encode(&mut bytes).unwrap();
+		msg.encode_length_delimited(&mut bytes).unwrap();
 
 		stdout.lock()
 			.write_all(&bytes)

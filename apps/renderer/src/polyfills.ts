@@ -63,10 +63,12 @@ import "zone.js/dist/zone"; // Included with Angular CLI.
  * APPLICATION IMPORTS
  */
 
+import { MessageType } from "@app/api";
+
 declare global {
 	var electron: {
 		getAppVersion(): Promise<string>,
-		send(message: string): Promise<string>,
+		send(type: MessageType, message: string): Promise<any>,
 		platform: string;
 	}
 }

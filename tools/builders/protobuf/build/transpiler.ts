@@ -36,7 +36,6 @@ interface TsOneOf extends TsReflectionObject {
 }
 
 export class Transpiler {
-	private _nspace?: string;
 	private _imports = new Map<string, Set<string>>();
 	private _enums: TsEnum[] = [];
 	private _types: TsType[] = [];
@@ -46,7 +45,6 @@ export class Transpiler {
 		let root: NamespaceBase;
 
 		if (parsed.package) {
-			this._nspace = parsed.package;
 			root = parsed.root.nested[parsed.package] as NamespaceBase;
 		} else {
 			root = parsed.root;
@@ -77,13 +75,6 @@ export class Transpiler {
 		});
 
 		if (this._imports.size) addLines("");
-		if (this._nspace) {
-			addLines(
-				`export namespace ${this._nspace} {`,
-				``,
-			);
-			depth++;
-		}
 
 		this._enums.forEach(it => {
 			addLines(`export enum ${it.name} {`);
@@ -141,11 +132,6 @@ export class Transpiler {
 			depth--;
 			addLines("}", "");
 		});
-
-		if (this._nspace) {
-			depth--;
-			addLines("}", "");
-		}
 
 		return result.reduce((acc, line, idx) => {
 			if (result[idx + 1]?.endsWith("}") && !line.trim())

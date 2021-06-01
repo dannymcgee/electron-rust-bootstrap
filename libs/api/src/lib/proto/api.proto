@@ -2,33 +2,38 @@ syntax = "proto3";
 package api;
 
 enum MessageType {
-	FOO = 0;
-	BAR = 1;
-	BAZ = 2;
+	NONE = 0;
+	FOO = 1;
+	BAR = 2;
+	BAZ = 3;
 }
 
 message Request {
-	message FooPayload { string foo = 5; }
-	message BarPayload { string bar = 6; }
-	message BazPayload { string baz = 7; }
-
-	MessageType type = 1;
-	oneof payload {
-		FooPayload foo = 2;
-		BarPayload bar = 3;
-		BazPayload baz = 4;
+	message Header {
+		MessageType msg_type = 1;
+	}
+	message Foo {
+		string foo = 2;
+	}
+	message Bar {
+		string bar = 3;
+	}
+	message Baz {
+		string baz = 4;
 	}
 }
 
 message Response {
-	message FooPayload { string foo = 5; }
-	message BarPayload { string bar = 6; }
-	message BazPayload { string baz = 7; }
-
-	MessageType type = 1;
-	oneof payload {
-		FooPayload foo = 2;
-		BarPayload bar = 3;
-		BazPayload baz = 4;
+	message Header {
+		MessageType msg_type = 1;
+	}
+	message Foo {
+		string foo = 2;
+	}
+	message Bar {
+		string bar = 3;
+	}
+	message Baz {
+		string baz = 4;
 	}
 }
