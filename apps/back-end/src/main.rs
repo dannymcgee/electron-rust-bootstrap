@@ -1,11 +1,22 @@
 #![feature(once_cell)]
 
+use std::{thread, time::Duration};
 use api::{MessageType, request, response};
 
 mod ipc;
 
 fn main() {
 	let (tx, rx) = ipc::pipe();
+	let tx_tick = tx.clone();
+
+	thread::spawn(move || {
+		loop {
+			thread::sleep(Duration::from_secs(5));
+
+			tx_tick.send(&response::Header { msg_type: MessageType::Foo as i32 });
+			tx_tick.send(&response::Foo { foo: "Tick!".into() });
+		}
+	});
 
 	loop {
 		let header: request::Header = rx.recv();

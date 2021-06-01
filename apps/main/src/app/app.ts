@@ -17,6 +17,10 @@ namespace app {
 		electron.on("activate", onActivate); // App is activated
 	}
 
+	export function getMainWindow(): BrowserWindow {
+		return mainWindow;
+	}
+
 	export function isDevelopmentMode() {
 		const isEnvironmentSet = "ELECTRON_IS_DEV" in process.env;
 		const getFromEnvironment = parseInt(process.env.ELECTRON_IS_DEV, 10) === 1;

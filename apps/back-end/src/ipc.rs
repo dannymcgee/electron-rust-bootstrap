@@ -3,7 +3,7 @@ use std::io::{self, BufRead, Write};
 use prost::Message;
 
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct IpcSender;
 
 impl IpcSender {
@@ -21,7 +21,7 @@ impl IpcSender {
 }
 
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct IpcReceiver;
 
 impl IpcReceiver {

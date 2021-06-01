@@ -1,7 +1,7 @@
-import { Component } from "@angular/core";
-import { ElectronService } from "./electron.service";
+import { Component, OnInit } from "@angular/core";
 
 import { MessageType } from "@app/api";
+import { ElectronService } from "./electron.service";
 
 @Component({
 	selector: "app-root",
@@ -12,12 +12,18 @@ import { MessageType } from "@app/api";
 	`,
 	styles: [``],
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
 	MessageType = MessageType;
 
 	constructor(
 		private _electron: ElectronService,
 	) {}
+
+	ngOnInit(): void {
+		this._electron
+			.recvAll(MessageType.FOO)
+			.subscribe(console.log);
+	}
 
 	async sendMessage(msgType: MessageType) {
 		await this._electron.send(msgType, "Hello, back-end!");

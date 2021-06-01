@@ -1,10 +1,10 @@
 import path from "path";
 
 import { ipcMain } from "electron";
-import { merge } from "rxjs";
 
-import { MessageType } from "@app/api";
+import { MessageType, Response } from "@app/api";
 import { pipe } from "./pipe";
+import app from "../app";
 
 const BACKEND_EXE_PATH = "apps/back-end/target/debug/back-end.exe";
 
@@ -16,10 +16,30 @@ export function init() {
 		tx.send(type, message);
 	});
 
-	merge(
-		rx.recvAll(MessageType.FOO),
-		rx.recvAll(MessageType.BAR),
-		rx.recvAll(MessageType.BAZ)
-	)
-		.subscribe(console.log);
+	rx.recvAll(MessageType.FOO)
+		.subscribe(message => {
+			sendToRenderer(MessageType.FOO, message);
+		});
+
+	rx.recvAll(MessageType.BAR)
+		.subscribe(message => {
+			sendToRenderer(MessageType.BAR, message);
+		});
+
+	rx.recvAll(MessageType.BAZ)
+		.subscribe(message => {
+			sendToRenderer(MessageType.BAZ, message);
+		});
+}
+
+function sendToRenderer(
+	msgType: MessageType,
+	message:
+		| typeof Response.Foo.prototype
+		| typeof Response.Bar.prototype
+		| typeof Response.Baz.prototype
+) {
+	app.getMainWindow()
+		.webContents
+		.send("message", { msgType, message });
 }
