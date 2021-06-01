@@ -11,14 +11,14 @@ import { Transpiler } from "./transpiler";
 export default createBuilder(runBuilder);
 
 async function runBuilder(opts: Options, ctx: BuilderContext) {
-	let { workspaceRoot } = ctx;
-	let protosPath = path.resolve(workspaceRoot, opts.protosPath);
-	let workspaceJson = await fs
-		.readFile(path.join(workspaceRoot, "angular.json"))
-		.then(buf => JSON.parse(buf.toString()));
-	let srcRoot = workspaceJson?.projects?.[ctx.target.project]?.sourceRoot as string;
-
 	try {
+		let { workspaceRoot } = ctx;
+		let protosPath = path.resolve(workspaceRoot, opts.protosPath);
+		let workspaceJson = await fs
+			.readFile(path.join(workspaceRoot, "angular.json"))
+			.then(buf => JSON.parse(buf.toString()));
+		let srcRoot = workspaceJson?.projects?.[ctx.target.project]?.sourceRoot as string;
+
 		await Promise.all([
 			generateTsFiles(protosPath, srcRoot),
 			buildRustLib(srcRoot),

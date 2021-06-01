@@ -64,6 +64,7 @@ export class Transpiler {
 			});
 		};
 
+		// Write import statement
 		this._imports.forEach((targets, source) => {
 			let stmt = `import { `;
 			stmt += Array.from(targets)
@@ -76,18 +77,44 @@ export class Transpiler {
 
 		if (this._imports.size) addLines("");
 
-		this._enums.forEach(it => {
-			addLines(`export enum ${it.name} {`);
+		// Handle enums
+		this._enums.forEach(en => {
+			// Write the enum declaration
+			addLines(`export enum ${en.name} {`);
 			depth++;
 
-			it.values.forEach((value, key) => {
-				addLines(`${key} = ${value},`);
+			en.values.forEach((value, key) => {
+				addLines(`${upperSnakeToPascal(key)} = ${value},`);
 			});
 
 			depth--;
 			addLines("}", "");
+
+			// Write derived types from associated enum keys, if any
+			let enumKeys = Array.from(en.values)
+				.filter(([, value]) => value !== 0)
+				.map(([key]) => upperSnakeToPascal(key));
+
+			this._types.forEach(typ => {
+				let children = this._types.filter(t => t.parent === typ.proto);
+				if (!children.length) return;
+
+				addLines(`export type ${typ.name}Message<T extends ${en.name}> =`);
+				depth ++;
+
+				children.forEach(ch => {
+					if (!enumKeys.includes(ch.name)) return;
+
+					addLines(`T extends ${en.name}.${ch.name} ? `
+						+ `typeof ${typ.name}.${ch.name}.prototype :`);
+				});
+
+				addLines(`never;`, "");
+				depth --;
+			});
 		});
 
+		// Write class declarations
 		this._types.forEach(it => {
 			let exportStmt: string;
 			let name: string;
@@ -133,6 +160,7 @@ export class Transpiler {
 			addLines("}", "");
 		});
 
+		// Format the final output
 		return result.reduce((acc, line, idx) => {
 			if (result[idx + 1]?.endsWith("}") && !line.trim())
 				return acc;
@@ -253,4 +281,28 @@ export class Transpiler {
 			imports.add(target);
 		});
 	}
+}
+
+function upperSnakeToPascal(value: string): string {
+	let result = "";
+
+	for (let i = 0; i < value.length; i++) {
+		let char = value.charAt(i);
+
+		if (i === 0) {
+			result += char;
+			continue;
+		}
+
+		if (char === "_") continue;
+
+		if (value.charAt(i - 1) === "_") {
+			result += char;
+			continue;
+		}
+
+		result += char.toLowerCase();
+	}
+
+	return result;
 }

@@ -4,7 +4,13 @@ import { Readable, Writable } from "stream";
 import { Observable, Subject } from "rxjs";
 import { filter, first, map, share } from "rxjs/operators";
 
-import { MessageType, Request, Response } from "@app/api";
+import {
+	MessageType,
+	Request,
+	RequestMessage,
+	Response,
+	ResponseMessage,
+} from "@app/api";
 
 const VARINT_FLAG = 1 << 7;
 
@@ -13,16 +19,12 @@ class Sender {
 		private _stream: Writable
 	) {}
 
-	send(msgType: MessageType.FOO, data: typeof Request.Foo.prototype): Promise<void>;
-	send(msgType: MessageType.BAR, data: typeof Request.Bar.prototype): Promise<void>;
-	send(msgType: MessageType.BAZ, data: typeof Request.Baz.prototype): Promise<void>;
-
-	async send(msgType: MessageType, data: any) {
+	async send(msgType: MessageType, message: RequestMessage<typeof msgType>) {
 		let header = Request.Header
 			.encode(new Request.Header({ msgType }))
 			.finish();
 		let request = getRequestType(msgType)
-			.encode(makeRequest(msgType, data))
+			.encode(message)
 			.finish();
 
 		await this._write(header).catch(onError);
@@ -42,19 +44,14 @@ class Sender {
 	}
 }
 
-interface AnyResponse {
-	msgType: MessageType;
-	message:
-		| typeof Response.Foo.prototype
-		| typeof Response.Bar.prototype
-		| typeof Response.Baz.prototype
-}
-
 class Receiver {
-	private _stream$: Observable<AnyResponse>;
+	private _stream$: Observable<{
+		msgType: MessageType;
+		message: ResponseMessage<MessageType>
+	}>;
 
 	constructor(proc: cp.ChildProcess, stream: Readable) {
-		let subject = new Subject<AnyResponse>();
+		let subject = new Subject<any>();
 		this._stream$ = subject.pipe(share());
 
 		proc.on("close", () => subject.complete());
@@ -69,9 +66,9 @@ class Receiver {
 				buf = await this._readBuffer(stream);
 				let response = ((msgType) => {
 					switch (msgType) {
-					case MessageType.FOO: return Response.Foo.decode(buf);
-					case MessageType.BAR: return Response.Bar.decode(buf);
-					case MessageType.BAZ: return Response.Baz.decode(buf);
+					case MessageType.Foo: return Response.Foo.decode(buf);
+					case MessageType.Bar: return Response.Bar.decode(buf);
+					case MessageType.Baz: return Response.Baz.decode(buf);
 					}
 				})(header.msgType);
 
@@ -88,13 +85,8 @@ class Receiver {
 		});
 	}
 
-	recv(msgType: MessageType.FOO): Promise<typeof Response.Foo.prototype>;
-	recv(msgType: MessageType.BAR): Promise<typeof Response.Bar.prototype>;
-	recv(msgType: MessageType.BAZ): Promise<typeof Response.Baz.prototype>;
-	recv(msgType: MessageType.NONE): never;
-
-	async recv(msgType: MessageType) {
-		if (msgType === MessageType.NONE)
+	async recv(msgType: MessageType): Promise<ResponseMessage<typeof msgType>> {
+		if (msgType === MessageType.None)
 			throw new Error("Invalid message type");
 
 		return this._stream$.pipe(
@@ -104,13 +96,8 @@ class Receiver {
 		).toPromise();
 	}
 
-	recvAll(msgType: MessageType.FOO): Observable<typeof Response.Foo.prototype>;
-	recvAll(msgType: MessageType.BAR): Observable<typeof Response.Bar.prototype>;
-	recvAll(msgType: MessageType.BAZ): Observable<typeof Response.Baz.prototype>;
-	recvAll(msgType: MessageType.NONE): never;
-
-	recvAll(msgType: MessageType) {
-		if (msgType === MessageType.NONE)
+	recvAll(msgType: MessageType): Observable<ResponseMessage<typeof msgType>> {
+		if (msgType === MessageType.None)
 			throw new Error("Invalid message type");
 
 		return this._stream$.pipe(
@@ -163,28 +150,9 @@ function onError(err: Error) {
 
 function getRequestType(type: MessageType) {
 	switch (type) {
-		case MessageType.FOO: return Request.Foo;
-		case MessageType.BAR: return Request.Bar;
-		case MessageType.BAZ: return Request.Baz;
-	}
-}
-
-function makeRequest(type: MessageType, message: string) {
-	switch (type) {
-		case MessageType.FOO:
-			return new Request.Foo({
-				foo: message,
-			});
-
-		case MessageType.BAR:
-			return new Request.Bar({
-				bar: message,
-			});
-
-		case MessageType.BAZ:
-			return new Request.Baz({
-				baz: message,
-			});
+		case MessageType.Foo: return Request.Foo;
+		case MessageType.Bar: return Request.Bar;
+		case MessageType.Baz: return Request.Baz;
 	}
 }
 

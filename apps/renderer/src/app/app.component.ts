@@ -6,9 +6,9 @@ import { ElectronService } from "./electron.service";
 @Component({
 	selector: "app-root",
 	template: `
-		<button (click)="sendMessage(MessageType.FOO)">Send Foo Message</button>
-		<button (click)="sendMessage(MessageType.BAR)">Send Bar Message</button>
-		<button (click)="sendMessage(MessageType.BAZ)">Send Baz Message</button>
+		<button (click)="sendMessage(MessageType.Foo)">Send Foo Message</button>
+		<button (click)="sendMessage(MessageType.Bar)">Send Bar Message</button>
+		<button (click)="sendMessage(MessageType.Baz)">Send Baz Message</button>
 	`,
 	styles: [``],
 })
@@ -21,11 +21,21 @@ export class AppComponent implements OnInit {
 
 	ngOnInit(): void {
 		this._electron
-			.recvAll(MessageType.FOO)
+			.recvAll(MessageType.Foo)
 			.subscribe(console.log);
 	}
 
 	async sendMessage(msgType: MessageType) {
-		await this._electron.send(msgType, "Hello, back-end!");
+		let key = ((msgType) => {
+			switch (msgType) {
+			case MessageType.Foo: return "foo";
+			case MessageType.Bar: return "bar";
+			case MessageType.Baz: return "baz";
+			}
+		})(msgType);
+
+		await this._electron.send(msgType, {
+			[key]: "Hello, back-end!"
+		} as any);
 	}
 }

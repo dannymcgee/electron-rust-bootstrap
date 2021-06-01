@@ -1,11 +1,23 @@
 import { Field, Message, Type } from "protobufjs";
 
 export enum MessageType {
-	NONE = 0,
-	FOO = 1,
-	BAR = 2,
-	BAZ = 3,
+	None = 0,
+	Foo = 1,
+	Bar = 2,
+	Baz = 3,
 }
+
+export type RequestMessage<T extends MessageType> =
+	T extends MessageType.Foo ? typeof Request.Foo.prototype :
+	T extends MessageType.Bar ? typeof Request.Bar.prototype :
+	T extends MessageType.Baz ? typeof Request.Baz.prototype :
+	never;
+
+export type ResponseMessage<T extends MessageType> =
+	T extends MessageType.Foo ? typeof Response.Foo.prototype :
+	T extends MessageType.Bar ? typeof Response.Bar.prototype :
+	T extends MessageType.Baz ? typeof Response.Baz.prototype :
+	never;
 
 @Type.d("Request_Header")
 class Request_Header extends Message<Request_Header> {

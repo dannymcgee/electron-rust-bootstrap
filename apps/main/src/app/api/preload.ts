@@ -1,4 +1,4 @@
-import { MessageType, Response } from "@app/api";
+import { MessageType, ResponseMessage } from "@app/api";
 import { contextBridge, ipcRenderer } from "electron";
 
 contextBridge.exposeInMainWorld("electron", {
@@ -11,11 +11,7 @@ contextBridge.exposeInMainWorld("electron", {
 	},
 	on: (
 		type: MessageType,
-		listener: (message:
-			| typeof Response.Foo.prototype
-			| typeof Response.Bar.prototype
-			| typeof Response.Baz.prototype
-		) => void,
+		listener: (message: ResponseMessage<typeof type>) => void,
 	) => {
 		ipcRenderer.on("message", (_, { msgType, message }) => {
 			if (msgType === type) listener(message);

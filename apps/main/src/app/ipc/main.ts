@@ -2,7 +2,7 @@ import path from "path";
 
 import { ipcMain } from "electron";
 
-import { MessageType, Response } from "@app/api";
+import { MessageType, ResponseMessage } from "@app/api";
 import { pipe } from "./pipe";
 import app from "../app";
 
@@ -16,28 +16,28 @@ export function init() {
 		tx.send(type, message);
 	});
 
-	rx.recvAll(MessageType.FOO)
+	rx.recvAll(MessageType.Foo)
 		.subscribe(message => {
-			sendToRenderer(MessageType.FOO, message);
+			console.log(message);
+			sendToRenderer(MessageType.Foo, message);
 		});
 
-	rx.recvAll(MessageType.BAR)
+	rx.recvAll(MessageType.Bar)
 		.subscribe(message => {
-			sendToRenderer(MessageType.BAR, message);
+			console.log(message);
+			sendToRenderer(MessageType.Bar, message);
 		});
 
-	rx.recvAll(MessageType.BAZ)
+	rx.recvAll(MessageType.Baz)
 		.subscribe(message => {
-			sendToRenderer(MessageType.BAZ, message);
+			console.log(message);
+			sendToRenderer(MessageType.Baz, message);
 		});
 }
 
 function sendToRenderer(
 	msgType: MessageType,
-	message:
-		| typeof Response.Foo.prototype
-		| typeof Response.Bar.prototype
-		| typeof Response.Baz.prototype
+	message: ResponseMessage<typeof msgType>,
 ) {
 	app.getMainWindow()
 		.webContents

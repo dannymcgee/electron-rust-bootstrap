@@ -3,7 +3,7 @@ import { Injectable } from "@angular/core";
 import { Observable, Subject } from "rxjs";
 import { filter, first, map, share } from "rxjs/operators";
 
-import { MessageType, Response } from "@app/api";
+import { MessageType, RequestMessage, ResponseMessage } from "@app/api";
 
 @Injectable({
 	providedIn: "root",
@@ -11,32 +11,29 @@ import { MessageType, Response } from "@app/api";
 export class ElectronService {
 	private _message$: Observable<{
 		msgType: MessageType;
-		message:
-			| typeof Response.Foo.prototype
-			| typeof Response.Bar.prototype
-			| typeof Response.Baz.prototype
+		message: ResponseMessage<MessageType>,
 	}>;
 
 	constructor() {
 		let subject = new Subject();
 		this._message$ = subject.pipe(share()) as any;
 
-		electron.on(MessageType.FOO, (message) => {
-			subject.next({ msgType: MessageType.FOO, message });
+		electron.on(MessageType.Foo, (message) => {
+			subject.next({ msgType: MessageType.Foo, message });
 		});
-		electron.on(MessageType.BAR, (message) => {
-			subject.next({ msgType: MessageType.BAR, message });
+		electron.on(MessageType.Bar, (message) => {
+			subject.next({ msgType: MessageType.Bar, message });
 		});
-		electron.on(MessageType.BAZ, (message) => {
-			subject.next({ msgType: MessageType.BAZ, message });
+		electron.on(MessageType.Baz, (message) => {
+			subject.next({ msgType: MessageType.Baz, message });
 		});
 	}
 
-	async send(msgType: MessageType, message: string) {
+	async send(msgType: MessageType, message: RequestMessage<typeof msgType>) {
 		return electron.send(msgType, message);
 	}
 
-	recv(msgType: MessageType) {
+	recv(msgType: MessageType): Promise<ResponseMessage<typeof msgType>> {
 		return this._message$.pipe(
 			filter(msg => msg.msgType === msgType),
 			first(),
@@ -44,7 +41,7 @@ export class ElectronService {
 		).toPromise();
 	}
 
-	recvAll(msgType: MessageType) {
+	recvAll(msgType: MessageType): Observable<ResponseMessage<typeof msgType>> {
 		return this._message$.pipe(
 			filter(msg => msg.msgType === msgType),
 			map(msg => msg.message),
